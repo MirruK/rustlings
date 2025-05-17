@@ -4,7 +4,7 @@
 // a custom error type to make it possible for callers to decide what to do next
 // when our function returns an error.
 
-use std::num::ParseIntError;
+use std::{collections::btree_map::Values, num::ParseIntError};
 
 #[derive(PartialEq, Debug)]
 enum CreationError {
@@ -43,8 +43,13 @@ impl PositiveNonzeroInteger {
     fn parse(s: &str) -> Result<Self, ParsePosNonzeroError> {
         // TODO: change this to return an appropriate error instead of panicking
         // when `parse()` returns an error.
-        let x: i64 = s.parse().unwrap();
-        Self::new(x).map_err(ParsePosNonzeroError::from_creation)
+        let x: Result<i64, _> = s.parse();
+        match x {
+            Err(parse_error) => Err(ParsePosNonzeroError::ParseInt(parse_error)),
+            // TODO: cont.
+            Ok(val) => Self::new(value),
+        }
+        //Self::new(x).map_err(ParsePosNonzeroError::from_creation)
     }
 }
 
